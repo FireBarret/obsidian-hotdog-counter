@@ -1,0 +1,9 @@
+{
+  "id": "hotdog-counter",
+  "name": "Hotdog Counter",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Counts how many times you wrote 'hotdog' in your notes.",
+  "author": "Your Name",
+  "isDesktopOnly": false
+}
