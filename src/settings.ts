@@ -1,5 +1,13 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import HotdogPlugin from './main';
+import type HotdogPlugin from './main';
+
+export interface HotdogSettings {
+  caseSensitive: boolean;
+}
+
+export const DEFAULT_SETTINGS: HotdogSettings = {
+  caseSensitive: false
+};
 
 export class HotdogSettingTab extends PluginSettingTab {
   plugin: HotdogPlugin;
