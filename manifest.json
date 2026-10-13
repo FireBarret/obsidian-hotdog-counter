@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
   "description": "Counts how many times you wrote 'hotdog' in your notes.",
-  "author": "Your Name",
+  "author": "Dariush Shaban (FireBarret)",
+  "fundingUrl": "https://buymeacoffee.com/shabandariush",
   "isDesktopOnly": false
 }
