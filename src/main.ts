@@ -32,7 +32,7 @@ export default class HotdogPlugin extends Plugin {
   }
 
   countHotdogs(text: string): number {
-    return countHotdogs(text, this.settings.caseSensitive);
+    return countHotdogs(text, this.settings.caseSensitive, this.settings.hiddenHotdogs);
   }
 
   private getText(): string | null {

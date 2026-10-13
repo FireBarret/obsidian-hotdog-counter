@@ -8,7 +8,8 @@ No? Well here's a plugin I made that counts how many glizzies you've got in your
 
 - The classics: `hotdog`, `Hotdog`, `HOTDOG`
 - The sloppy ones: `hottodoggu`, `ho t dawg`, `h o t d o g`, `hawtdog`
-- The sneaky ones: capital letters that spell it out, like **HO**w many **T**imes have you **DO**ne para**G**liding?
+- The cousins: `glizzy`, `wiener`, `weenie`, `frankfurter`, `bratwurst`, `sausage`, `meat sac`
+- The sneaky ones: letters of nearby words that spell it out, like **HO**w many **T**imes have you **DO**ne para**G**liding? Works in lowercase too (`how many times have you done paragliding`). Capitals alone count at any distance. Turn this off with **Hidden hotdogs** in settings if it gets too keen.
 
 ## Using it
 

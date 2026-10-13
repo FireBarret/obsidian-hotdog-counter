@@ -3,10 +3,12 @@ import type HotdogPlugin from './main';
 
 export interface HotdogSettings {
   caseSensitive: boolean;
+  hiddenHotdogs: boolean;
 }
 
 export const DEFAULT_SETTINGS: HotdogSettings = {
-  caseSensitive: false
+  caseSensitive: false,
+  hiddenHotdogs: true
 };
 
 export class HotdogSettingTab extends PluginSettingTab {
@@ -28,6 +30,17 @@ export class HotdogSettingTab extends PluginSettingTab {
         .setValue(this.plugin.settings.caseSensitive)
         .onChange(async (value) => {
           this.plugin.settings.caseSensitive = value;
+          await this.plugin.saveSettings();
+          this.plugin.updateCount();
+        }));
+
+    new Setting(containerEl)
+      .setName('Hidden hotdogs')
+      .setDesc('Count hotdogs spelled out by the letters of nearby words, like "how many times have you done paragliding"')
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.hiddenHotdogs)
+        .onChange(async (value) => {
+          this.plugin.settings.hiddenHotdogs = value;
           await this.plugin.saveSettings();
           this.plugin.updateCount();
         }));
