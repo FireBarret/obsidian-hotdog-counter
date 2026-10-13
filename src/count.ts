@@ -15,20 +15,28 @@ const CASE_SENSITIVE = new RegExp(FUZZY, 'g');
 const CASE_INSENSITIVE = new RegExp(FUZZY, 'gi');
 
 const TARGET = 'hotdog';
-// Hidden hotdogs: h,o,t,d,o,g in order inside a window this wide
-// (41 chars is "how many times have you done paragliding")
-const WINDOW = 45;
+
+export interface CountOptions {
+  caseSensitive: boolean;
+  /** Also count hotdogs spelled out by the letters of nearby words */
+  hidden: boolean;
+  /** How many characters a hidden hotdog may stretch over (41 is "how many times have you done paragliding") */
+  window: number;
+}
+
+/** One hotdog: the [from, to) character spans to highlight. */
+export type Match = Array<[number, number]>;
 
 /**
  * Finds hotdogs spelled out by the letters of nearby words, over text[from, to).
- * Two ways count: any case within WINDOW chars, or capitals only at any distance
+ * Two ways count: any case within `window` chars, or capitals only at any distance
  * ("HOw many Times have you DOne paraGliding?"). A match resets both so nothing counts twice.
+ * Each match highlights just its six letters.
  */
-function scanHidden(text: string, from: number, to: number, sloppy: boolean): number {
-  // latest[k] = latest start index of an in-order run of the first k letters (-1 = none)
-  const latest = [0, -1, -1, -1, -1, -1, -1];
-  let caps = 0;
-  let hits = 0;
+function scanHidden(text: string, from: number, to: number, opts: CountOptions, out: Match[]): void {
+  // paths[k] = positions of the latest in-order run of the first k letters
+  const paths: Array<number[] | null> = [null, null, null, null, null, null, null];
+  let caps: number[] = [];
 
   for (let i = from; i < to; i++) {
     const code = text.charCodeAt(i);
@@ -36,48 +44,53 @@ function scanHidden(text: string, from: number, to: number, sloppy: boolean): nu
     if (!upper && !(code >= 97 && code <= 122)) continue;
     const ch = String.fromCharCode(code | 32);
 
-    let done = false;
+    let found: number[] | null = null;
 
     if (upper) {
-      if (ch === TARGET[caps]) {
-        if (++caps === 6) done = true;
+      if (ch === TARGET[caps.length]) {
+        caps.push(i);
+        if (caps.length === 6) found = caps;
       } else {
-        caps = ch === 'h' ? 1 : 0;
+        caps = ch === 'h' ? [i] : [];
       }
     }
 
-    if (sloppy) {
+    if (opts.hidden) {
       for (let k = 6; k >= 1; k--) {
         if (ch !== TARGET[k - 1]) continue;
-        const prev = k === 1 ? i : latest[k - 1] ?? -1;
-        if (prev >= 0) latest[k] = prev;
+        const prev = k === 1 ? [] : paths[k - 1];
+        if (prev) paths[k] = [...prev, i];
       }
-      const start = latest[6] ?? -1;
-      if (start >= 0 && i - start < WINDOW) done = true;
+      const path = paths[6];
+      if (!found && path && i - (path[0] ?? i) < opts.window) found = path;
     }
 
-    if (done) {
-      hits++;
-      caps = 0;
-      latest.fill(-1, 1);
+    if (found) {
+      out.push(found.map((p): [number, number] => [p, p + 1]));
+      caps = [];
+      paths.fill(null);
     }
   }
-  return hits;
 }
 
-export function countHotdogs(text: string, caseSensitive: boolean, sloppy: boolean): number {
-  const pattern = caseSensitive ? CASE_SENSITIVE : CASE_INSENSITIVE;
+export function findHotdogs(text: string, opts: CountOptions): Match[] {
+  const pattern = opts.caseSensitive ? CASE_SENSITIVE : CASE_INSENSITIVE;
   pattern.lastIndex = 0;
 
-  let count = 0;
+  const matches: Match[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
   // Fuzzy matches count once; the hidden scan covers the text in between
   // so a plain "HOTDOG" is never counted twice.
   while ((m = pattern.exec(text)) !== null) {
-    count++;
-    count += scanHidden(text, last, m.index, sloppy);
+    scanHidden(text, last, m.index, opts, matches);
+    matches.push([[m.index, m.index + m[0].length]]);
     last = m.index + m[0].length;
   }
-  return count + scanHidden(text, last, text.length, sloppy);
+  scanHidden(text, last, text.length, opts, matches);
+  return matches;
+}
+
+export function countHotdogs(text: string, opts: CountOptions): number {
+  return findHotdogs(text, opts).length;
 }

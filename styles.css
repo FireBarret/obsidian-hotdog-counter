@@ -1,8 +1,12 @@
-/*
+.hotdog-status {
+  cursor: pointer;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.hotdog-status.is-highlighting {
+  font-weight: var(--font-bold);
+}
 
-If your plugin does not need CSS, delete this file.
-
-*/
+.hotdog-highlight {
+  background-color: color-mix(in srgb, var(--hotdog-highlight, #ffcc00) 55%, transparent);
+  border-radius: 3px;
+}
