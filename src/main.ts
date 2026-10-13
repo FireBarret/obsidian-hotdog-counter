@@ -1,8 +1,6 @@
 import { Plugin, MarkdownView, Notice, debounce } from 'obsidian';
+import { countHotdogs } from './count';
 import { DEFAULT_SETTINGS, HotdogSettings, HotdogSettingTab } from './settings';
-
-const CASE_SENSITIVE = /hotdog/g;
-const CASE_INSENSITIVE = /hotdog/gi;
 
 export default class HotdogPlugin extends Plugin {
   settings: HotdogSettings;
@@ -34,11 +32,7 @@ export default class HotdogPlugin extends Plugin {
   }
 
   countHotdogs(text: string): number {
-    const pattern = this.settings.caseSensitive ? CASE_SENSITIVE : CASE_INSENSITIVE;
-    pattern.lastIndex = 0;
-    let count = 0;
-    while (pattern.test(text)) count++;
-    return count;
+    return countHotdogs(text, this.settings.caseSensitive);
   }
 
   private getText(): string | null {

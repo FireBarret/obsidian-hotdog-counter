@@ -19,7 +19,12 @@ jobs:
                   cache: "npm"
             - run: npm ci
             - run: npm run build
+            - name: Package zip
+              run: |
+                  mkdir hotdog-counter
+                  cp main.js manifest.json styles.css hotdog-counter/
+                  zip -r hotdog-counter.zip hotdog-counter
             - name: Create release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: gh release create "$GITHUB_REF_NAME" main.js manifest.json styles.css --title "$GITHUB_REF_NAME" --generate-notes
+              run: gh release create "$GITHUB_REF_NAME" hotdog-counter.zip --title "$GITHUB_REF_NAME" --generate-notes
