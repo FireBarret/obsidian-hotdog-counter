@@ -1,8 +1,12 @@
 import { Plugin, MarkdownView, Notice, debounce } from 'obsidian';
 import { DEFAULT_SETTINGS, HotdogSettings, HotdogSettingTab } from './settings';
 
-const CASE_SENSITIVE = /hotdog/g;
-const CASE_INSENSITIVE = /hotdog/gi;
+// Fuzzy "hotdog": allows spaces/dots/dashes between letters, o/a swaps,
+// extra t's, a stray "w", and a skipped "o" (hotdog, hottodog, ho t dawg, h o t d o g, hawtdog)
+const SEP = '[\\s._-]{0,3}';
+const FUZZY = `h${SEP}[oa]w?${SEP}t+${SEP}o?${SEP}d${SEP}[oa]w?${SEP}g`;
+const CASE_SENSITIVE = new RegExp(FUZZY, 'g');
+const CASE_INSENSITIVE = new RegExp(FUZZY, 'gi');
 
 export default class HotdogPlugin extends Plugin {
   settings: HotdogSettings;
