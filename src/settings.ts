@@ -23,7 +23,7 @@ export class HotdogSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Case sensitive')
-      .setDesc('Treat capitalized spellings as different words')
+      .setDesc('Only count lowercase spellings')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.caseSensitive)
         .onChange(async (value) => {
